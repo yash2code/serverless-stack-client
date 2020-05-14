@@ -12,6 +12,7 @@ function App() {
   const history = useHistory()
   const [isAuthenticating, setIsAuthenticating] = useState(true)
   const [isAuthenticated, userHasAuthenticated] = useState(false)
+  const [userEmail, setUserEmail] = useState(null)
 
   useEffect(() => {
     onLoad()
@@ -19,7 +20,10 @@ function App() {
 
   async function onLoad() {
     try {
-      await Auth.currentSession()
+      const user = await Auth.currentSession()
+      setUserEmail(user.getIdToken().payload.email)
+
+      await console.log(user.getIdToken().payload.email)
       userHasAuthenticated(true)
     } catch (e) {
       if (e !== 'No current user') {
@@ -64,7 +68,9 @@ function App() {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
+        <AppContext.Provider
+          value={{ isAuthenticated, userHasAuthenticated, userEmail }}
+        >
           <Routes />
         </AppContext.Provider>
       </div>
