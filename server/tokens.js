@@ -20,7 +20,7 @@ const chatToken = (identity, config) => {
   return token;
 };
 
-const videoToken = (identity, room, config) => {
+const videoToken = (identity, room, config) => { 
   let videoGrant;
   if (typeof room !== "undefined") {
     videoGrant = new VideoGrant({ room });

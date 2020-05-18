@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom'
 import { useAppContext } from '../libs/contextLib'
 
 export default function Home() {
-  console.log(useAppContext())
   const history = useHistory()
 
   const [isLoading, setIsLoading] = useState(false)

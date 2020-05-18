@@ -7,9 +7,7 @@ import { useAppContext } from '../libs/contextLib'
 const VideoContainer = () => {
   const [token, setToken] = useState(null)
   const { userEmail } = useAppContext()
-
-  console.log(useAppContext())
-
+  
   useEffect(() => {
     try {
       fetch('/video/token', {

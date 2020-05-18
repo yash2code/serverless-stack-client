@@ -23,7 +23,6 @@ function App() {
       const user = await Auth.currentSession()
       setUserEmail(user.getIdToken().payload.email)
 
-      await console.log(user.getIdToken().payload.email)
       userHasAuthenticated(true)
     } catch (e) {
       if (e !== 'No current user') {

@@ -3,6 +3,7 @@ import Video from 'twilio-video'
 import LoaderButton from '../components/LoaderButton'
 import { useHistory } from 'react-router-dom'
 import Participant from '../components/Participant'
+import { onError } from '../libs/errorLib'
 
 const Room = ({ roomName, token, handleLogout }) => {
   const history = useHistory()
@@ -19,6 +20,7 @@ const Room = ({ roomName, token, handleLogout }) => {
         prevParticipants.filter((p) => p !== participant)
       )
     }
+    if(token) {
     Video.connect(token, {
       name: roomName,
     }).then((room) => {
@@ -28,9 +30,11 @@ const Room = ({ roomName, token, handleLogout }) => {
       console.log(room)
       room.participants.forEach(participantConnected)
     })
+  }
 
     return () => {
       setIsLoading(true)
+
       setRoom((currentRoom) => {
         if (currentRoom && currentRoom.localParticipant.state === 'connected') {
           currentRoom.localParticipant.tracks.forEach(function (
@@ -44,9 +48,10 @@ const Room = ({ roomName, token, handleLogout }) => {
           return currentRoom
         }
       })
-      history.push('/')
+      setIsLoading(false)
+      // history.push('/')
     }
-  }, [roomName, token, history])
+  }, [roomName, token])
 
   const remoteParticipants = participants.map((participant) => (
     <Participant key={participant.sid} participant={participant} />

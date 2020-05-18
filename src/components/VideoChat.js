@@ -11,9 +11,7 @@ const VideoChat = (props) => {
   return (
     <div>
       {' '}
-      {token && (
-        <Room roomName='test-room' token={token} handleLogout={handleLogout} />
-      )}
+      <Room roomName='test-room' token={token} handleLogout={handleLogout} />
     </div>
   )
 }
