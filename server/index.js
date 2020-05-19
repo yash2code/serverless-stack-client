@@ -4,15 +4,10 @@ const bodyParser = require('body-parser')
 const pino = require('express-pino-logger')()
 const { chatToken, videoToken, voiceToken } = require('./tokens')
 const Twilio = require('twilio')
-const request = require('request-promise')
 var ffmpeg = require('fluent-ffmpeg')
 const app = express()
 const AWS = require('aws-sdk')
 const fs = require('fs')
-const streams = require('memory-streams')
-const toWav = require('audiobuffer-to-wav')
-const AudioContext = require('web-audio-api').AudioContext
-const audioContext = new AudioContext()
 const axios = require('axios')
 
 const download_media = (url, media_path) =>
@@ -28,6 +23,43 @@ const download_media = (url, media_path) =>
           .on('error', (e) => reject(e))
       })
   )
+  // .then(media_path => {
+  //   let path = media_path.split('.')
+  //   if(path.includes('mkv')){
+  //     await ffmpeg(`${recordingSid}.mka`)
+  //         .addInput(`${recordingSid}.mp3`)
+  //         .on('start', function (commandLine) {
+  //           console.log('Spawned Ffmpeg with command: ' + commandLine)
+  //         })
+  //         .on('progress', function (progress) {
+  //           console.log('Processing: ' + progress.percent + '% done')
+  //         })
+  //         .toFormat('mp4')
+  //         .on('end', function () {
+  //           console.log('Processing finished !')
+  //           var params = {
+  //             Body: fs.createReadStream(`${recordingSid}.mp4`),
+  //             Bucket: config.aws.bucketNameVideo,
+  //             Key: `${recordingSid}.mp4`,
+  //           }
+  //           s3.upload(params, function (err, data) {
+  //             //handle error
+  //             if (err) {
+  //               console.log('Error', err)
+  //             }
+
+  //             //success
+  //             if (data) {
+  //               console.log('Uploaded in:', data.Location)
+  //             }
+  //           })
+  //         })
+  //         .on('error', function (err) {
+  //           console.log('An error occurred: ' + err.message)
+  //         })
+  //         .save(`${recordingSid}.mp4`)
+  //   }
+  // })
 
 AWS.config.update({
   accessKeyId: config.aws.accessKeyId,
@@ -48,40 +80,6 @@ const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {
 
 let media = []
 
-const load = async (options, recordingSid, container) => {
-  const body = await request(options)
-  const uploadResult = await s3
-    .upload({
-      Bucket: config.aws.bucketName,
-      Key: `${recordingSid}.${container}`,
-      Body: body,
-    })
-    .promise()
-
-  console.log(uploadResult)
-  if (container == 'mka') {
-    var params = {
-      LanguageCode: 'en-US',
-      Media: {
-        MediaFileUri: uploadResult.Location,
-      },
-      OutputBucketName: 'weadmit-transcribe-bucket',
-      TranscriptionJobName: `${recordingSid}`,
-    }
-    transcribeservice.startTranscriptionJob(params, function (err, data) {
-      if (err) console.log(err, err.stack)
-      // an error occurred
-      else console.log(data) // successful response
-    })
-  }
-
-  return uploadResult
-}
-
-const getBuffer = async (options) => {
-  const body = await request(options)
-  return body
-}
 app.post('/api/statuscallback', (req, res) => {
   res.setHeader('Content-Type', 'application/x-www-urlencoded')
   console.log(req.body.RecordingSid, 'req in callback', req.body)
@@ -93,27 +91,14 @@ app.post('/api/statuscallback', (req, res) => {
     const uri = `https://video.twilio.com/v1/Recordings/${recordingSid}/Media`
     client.request({ method: 'GET', uri: uri }).then(async (response) => {
       const mediaLocation = response.body.redirect_to
-      const options = {
-        uri: mediaLocation,
-        encoding: null,
-      }
 
       await download_media(mediaLocation, `${recordingSid}.${container}`)
 
       media.push(`${recordingSid}.${container}`)
       console.log(media, 'media')
       if (container == 'mka') {
-        // let resp = await getBuffer(options)
-        // let resp = fs.readFileSync(mediaLocation);
-        // console.log(resp)
-        // audioContext.decodeAudioData(`${mediaLocation}.mka`, buffer => {
-        //   let wav = toWav(buffer);
-        //   console.log(wav,' in wav')
-        //   // do something with the WAV ArrayBuffer ...
-        // });
         await new ffmpeg(fs.createReadStream(`${recordingSid}.mka`))
           .toFormat('mp3')
-          // .output(`${recordingSid}.mp3`)
           .on('progress', function (progress) {
             console.log('Processing: ' + progress.percent + '% done')
           })
@@ -138,7 +123,7 @@ app.post('/api/statuscallback', (req, res) => {
                   Media: {
                     MediaFileUri: data.Location,
                   },
-                  OutputBucketName: 'weadmit-transcribe-bucket',
+                  OutputBucketName: config.aws.bucketNameTranscribe,
                   TranscriptionJobName: `${recordingSid}`,
                 }
                 transcribeservice.startTranscriptionJob(params, function (
@@ -154,41 +139,40 @@ app.post('/api/statuscallback', (req, res) => {
           })
           .save(`${recordingSid}.mp3`)
       }
-      // if (media.length > 1) {
+      if (media.length > 1) {
+        await ffmpeg(media[1])
+          .addInput(media[0])
+          .on('start', function (commandLine) {
+            console.log('Spawned Ffmpeg with command: ' + commandLine)
+          })
+          .on('progress', function (progress) {
+            console.log('Processing: ' + progress.percent + '% done')
+          })
+          .toFormat('mp4')
+          .on('end', function () {
+            console.log('Processing finished !')
+            var params = {
+              Body: fs.createReadStream(`${recordingSid}.mp4`),
+              Bucket: config.aws.bucketNameVideo,
+              Key: `${recordingSid}.mp4`,
+            }
+            s3.upload(params, function (err, data) {
+              //handle error
+              if (err) {
+                console.log('Error', err)
+              }
 
-      //    ffmpeg(media[0])
-      //     .addInput(media[1])
-      //     .on('start', function(commandLine) {
-      //       console.log('Spawned Ffmpeg with command: ' + commandLine);
-      //     })
-      //     .on('progress', function(progress) {
-      //       console.log('Processing: ' + progress.percent + '% done');
-      //     })
-      //     .format('mkv')
-      //     .output(`${recordingSid}.mkv`)
-      //     .on('end', function () {
-      //       console.log('Processing finished !')
-      //       var params = {
-      //         Body: fs.createReadStream(`${recordingSid}.mkv`),
-      //         Bucket: config.aws.bucketName,
-      //         Key: `${recordingSid}.mkv`,
-      //       }
-      //       s3.putObject(params, function (err, data) {
-      //         //handle error
-      //         if (err) {
-      //           console.log('Error', err)
-      //         }
-
-      //         //success
-      //         if (data) {
-      //           console.log('Uploaded in:', data.Location)
-      //         }
-      //       })
-      //     })
-      //     .on('error', function (err) {
-      //       console.log('An error occurred: ' + err.message)
-      //     })
-      // }
+              //success
+              if (data) {
+                console.log('Uploaded in:', data.Location)
+              }
+            })
+          })
+          .on('error', function (err) {
+            console.log('An error occurred: ' + err.message)
+          })
+          .save(`${recordingSid}.mp4`)
+      }
     })
   }
   res.send('hello callback')

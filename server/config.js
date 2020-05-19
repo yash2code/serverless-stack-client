@@ -11,6 +11,8 @@ module.exports = {
   aws: {
     accessKeyId: process.env.ACCESS_KEY_ID,
     secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    bucketName: process.env.BUCKET_NAME
+    bucketName: process.env.BUCKET_NAME,
+    bucketNameTranscribe: process.env.BUCKET_NAME_TRANSCRIBE,
+    bucketNameVideo: process.env.BUCKET_NAME_VIDEO
   }
 };
