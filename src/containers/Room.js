@@ -49,7 +49,7 @@ const Room = ({ roomName, token, handleLogout }) => {
         }
       })
       setIsLoading(false)
-      // history.push('/')
+      history.push('/')
     }
   }, [roomName, token])
 

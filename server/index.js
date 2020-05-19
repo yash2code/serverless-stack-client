@@ -23,43 +23,6 @@ const download_media = (url, media_path) =>
           .on('error', (e) => reject(e))
       })
   )
-  // .then(media_path => {
-  //   let path = media_path.split('.')
-  //   if(path.includes('mkv')){
-  //     await ffmpeg(`${recordingSid}.mka`)
-  //         .addInput(`${recordingSid}.mp3`)
-  //         .on('start', function (commandLine) {
-  //           console.log('Spawned Ffmpeg with command: ' + commandLine)
-  //         })
-  //         .on('progress', function (progress) {
-  //           console.log('Processing: ' + progress.percent + '% done')
-  //         })
-  //         .toFormat('mp4')
-  //         .on('end', function () {
-  //           console.log('Processing finished !')
-  //           var params = {
-  //             Body: fs.createReadStream(`${recordingSid}.mp4`),
-  //             Bucket: config.aws.bucketNameVideo,
-  //             Key: `${recordingSid}.mp4`,
-  //           }
-  //           s3.upload(params, function (err, data) {
-  //             //handle error
-  //             if (err) {
-  //               console.log('Error', err)
-  //             }
-
-  //             //success
-  //             if (data) {
-  //               console.log('Uploaded in:', data.Location)
-  //             }
-  //           })
-  //         })
-  //         .on('error', function (err) {
-  //           console.log('An error occurred: ' + err.message)
-  //         })
-  //         .save(`${recordingSid}.mp4`)
-  //   }
-  // })
 
 AWS.config.update({
   accessKeyId: config.aws.accessKeyId,
