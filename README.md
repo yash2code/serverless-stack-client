@@ -20,5 +20,3 @@
 `cp .env.example .env`
 
 `npm i && npm run dev`
-
-Check [Demo](https://master.d3rvqrizibld2k.amplifyapp.com/) 
