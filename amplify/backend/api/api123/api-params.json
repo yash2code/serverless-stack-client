@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/weadmit",
+            "lambdaFunction": "weadmit3d80fc23",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "api123",
+    "apiName": "api123",
+    "functionArns": [
+        {
+            "lambdaFunction": "weadmit3d80fc23"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "amplify-weadmit-weadmit-192011-authRole",
+        "unAuthRoleName": "amplify-weadmit-weadmit-192011-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "weadmit3d80fc23",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}

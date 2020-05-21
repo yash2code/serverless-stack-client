@@ -3,6 +3,7 @@ import { Auth } from 'aws-amplify'
 import { useHistory } from 'react-router-dom'
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap'
 import LoaderButton from '../components/LoaderButton'
+import { AppContext } from '../libs/contextLib'
 import { useAppContext } from '../libs/contextLib'
 import { useFormFields } from '../libs/hooksLib'
 import { onError } from '../libs/errorLib'
@@ -10,7 +11,7 @@ import './Login.css'
 
 export default function Login() {
   const history = useHistory()
-  const { userHasAuthenticated } = useAppContext()
+  const { userHasAuthenticated, setUserEmail } = useAppContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fields, handleFieldChange] = useFormFields({
     email: '',
@@ -29,6 +30,7 @@ export default function Login() {
     try {
       await Auth.signIn(fields.email, fields.password)
       userHasAuthenticated(true)
+      setUserEmail(fields.email)
       history.push('/')
     } catch (e) {
       onError(e)
@@ -37,25 +39,28 @@ export default function Login() {
   }
 
   return (
-      <div className='Login'>
-        <form onSubmit={handleSubmit}>
-          <FormGroup controlId='email' bsSize='large'>
-            <ControlLabel>Email</ControlLabel>
-            <FormControl
-              autoFocus
-              type='email'
-              value={fields.email}
-              onChange={handleFieldChange}
-            />
-          </FormGroup>
-          <FormGroup controlId='password' bsSize='large'>
-            <ControlLabel>Password</ControlLabel>
-            <FormControl
-              type='password'
-              value={fields.password}
-              onChange={handleFieldChange}
-            />
-          </FormGroup>
+    <div className='Login'>
+      <form onSubmit={handleSubmit}>
+        <FormGroup controlId='email' bsSize='large'>
+          <ControlLabel>Email</ControlLabel>
+          <FormControl
+            autoFocus
+            type='email'
+            value={fields.email}
+            onChange={handleFieldChange}
+          />
+        </FormGroup>
+        <FormGroup controlId='password' bsSize='large'>
+          <ControlLabel>Password</ControlLabel>
+          <FormControl
+            type='password'
+            value={fields.password}
+            onChange={handleFieldChange}
+          />
+        </FormGroup>
+        {/* <AppContext.Provider
+          value={{ userEmail: fields.email }}
+        > */}
           <LoaderButton
             block
             type='submit'
@@ -65,7 +70,8 @@ export default function Login() {
           >
             Login
           </LoaderButton>
-        </form>
-      </div>
+        {/* </AppContext.Provider> */}
+      </form>
+    </div>
   )
 }

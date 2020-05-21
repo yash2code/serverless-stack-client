@@ -20,7 +20,9 @@ function App() {
 
   async function onLoad() {
     try {
+      console.log('check00')
       const user = await Auth.currentSession()
+      console.log(user.getIdToken().payload.email)
       setUserEmail(user.getIdToken().payload.email)
 
       userHasAuthenticated(true)
@@ -68,7 +70,7 @@ function App() {
           </Navbar.Collapse>
         </Navbar>
         <AppContext.Provider
-          value={{ isAuthenticated, userHasAuthenticated, userEmail }}
+          value={{ isAuthenticated, userHasAuthenticated, userEmail, setUserEmail }}
         >
           <Routes />
         </AppContext.Provider>

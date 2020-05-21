@@ -1,0 +1,23 @@
+{
+    "weadmit": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-weadmit-weadmit-192011-authRole",
+            "UnauthRoleArn": "arn:aws:iam::278941578439:role/amplify-weadmit-weadmit-192011-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::278941578439:role/amplify-weadmit-weadmit-192011-authRole",
+            "Region": "ap-south-1",
+            "DeploymentBucketName": "amplify-weadmit-weadmit-192011-deployment",
+            "UnauthRoleName": "amplify-weadmit-weadmit-192011-unauthRole",
+            "StackName": "amplify-weadmit-weadmit-192011",
+            "StackId": "arn:aws:cloudformation:ap-south-1:278941578439:stack/amplify-weadmit-weadmit-192011/08f60140-9b6a-11ea-9c61-063f7331dcfe",
+            "AmplifyAppId": "d144v9z76qpyk4"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d144v9z76qpyk4",
+                    "type": "manual"
+                }
+            }
+        }
+    }
+}
