@@ -1,0 +1,1 @@
+rsync -ravze "ssh -i ~/.ssh/weadmit.pem " --exclude '.git/' --exclude 'node_modules/' ~/Desktop/sless-tut/weadmit-app-client/*  ubuntu@ec2-13-127-88-13.ap-south-1.compute.amazonaws.com:/var/www/myapp/client

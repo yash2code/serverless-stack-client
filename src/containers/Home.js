@@ -15,16 +15,6 @@ export default function Home() {
     history.push('/video-chat')
   }
 
-  useEffect(() => {
-    try {
-    fetch('/weadmit')
-    .then(res => res.json())
-    .then(res => console.log(res,'resss'))
-  } catch(e) {
-    console.log(e)
-  }
-  },[])
-
   return (
     <div className='Home'>
       <div className='lander'>

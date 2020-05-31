@@ -10,7 +10,7 @@ const VideoContainer = () => {
   
   useEffect(() => {
     try {
-      fetch('/video/token', {
+      fetch('/api/video/token', {
         method: 'POST',
         body: JSON.stringify({
           identity: userEmail,

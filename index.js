@@ -9,10 +9,8 @@ const app = express()
 const AWS = require('aws-sdk')
 const fs = require('fs')
 const axios = require('axios')
-const morgan = require("morgan");
-const cors = require("cors");
-
-
+const morgan = require('morgan');
+const cors = require('cors');
 const download_media = (url, media_path) =>
   axios({
     url,
@@ -40,13 +38,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(pino)
 app.use(morgan('combined'));
-app.use(cors())
+app.use(cors());
 
-const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {
-  accountSid: config.twilio.accountSid,
-})
+//const client = new Twilio(config.twilio.apiKey, config.twilio.apiSecret, {
+ // accountSid: config.twilio.accountSid,
+//})
 
-let media = [] 
+let media = []
 
 app.post('/api/statuscallback', (req, res) => {
   res.setHeader('Content-Type', 'application/x-www-urlencoded')
@@ -180,14 +178,14 @@ app.post('/chat/token', (req, res) => {
   sendTokenResponse(token, res)
 })
 
-app.get('/api/video/token', (req, res) => {
-  const identity = req.query.identity || 'hello@abc.com'
-  const room = req.query.room || 'hello'
+app.get('/video/token', (req, res) => {
+  const identity = req.query.identity
+  const room = req.query.room
   const token = videoToken(identity, room, config)
   sendTokenResponse(token, res)
 })
 
-app.post('/api/video/token', (req, res) => {
+app.post('/video/token', (req, res) => {
   const identity = req.body.identity
   const room = req.body.room
   const token = videoToken(identity, room, config)
@@ -206,6 +204,6 @@ app.post('/voice/token', (req, res) => {
   sendTokenResponse(token, res)
 })
 
-app.listen(3002, () =>
-  console.log('Express server is running on localhost:3002')
+app.listen(3001, () =>
+  console.log('Express server is running on localhost:3001')
 )

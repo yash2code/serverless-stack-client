@@ -7,6 +7,8 @@ import Signup from './containers/Signup'
 import VideoContainer from './containers/VideoContainer'
 import AuthenticatedRoute from './components/AuthenticatedRoute'
 import UnauthenticatedRoute from './components/UnauthenticatedRoute'
+import VideoForm from './containers/VideoForm'
+import NewNote from './containers/NewNote'
 
 export default function Routes() {
   return (
@@ -14,6 +16,9 @@ export default function Routes() {
       <AuthenticatedRoute exact path='/'>
         <Home />
       </AuthenticatedRoute>
+      {/* <AuthenticatedRoute exact path='/video-form'>
+        <VideoForm />
+      </AuthenticatedRoute> */}
       <UnauthenticatedRoute exact path='/login'>
         <Login />
       </UnauthenticatedRoute>
@@ -22,6 +27,9 @@ export default function Routes() {
       </UnauthenticatedRoute>
       <AuthenticatedRoute exact path='/video-chat'>
         <VideoContainer />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute exact path='/notes/new'>
+        <NewNote />
       </AuthenticatedRoute>
       {/* Finally, catch all unmatched routes */}
       <Route>
